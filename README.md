@@ -8,4 +8,8 @@
   Run `npm i` to install the dependencies.
 
   Run `npm run dev` to start the development server.
+
+  view data
+
+   https://vulbright-website.onrender.com/api/admin/data?key=vulbright-admin-2026
   

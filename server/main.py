@@ -165,6 +165,22 @@ async def create_application(
         conn.close()
 
 
+@app.get("/api/admin/data")
+def admin_data(key: str = ""):
+    if key != "wisesource-admin-2026":
+        raise HTTPException(status_code=403, detail="Forbidden")
+    conn = get_db()
+    try:
+        return {
+            "contacts": db_fetchall(conn, "SELECT * FROM contacts ORDER BY created_at DESC"),
+            "job_applications": db_fetchall(conn, "SELECT * FROM job_applications ORDER BY created_at DESC"),
+            "newsletter_subscriptions": db_fetchall(conn, "SELECT * FROM newsletter_subscriptions ORDER BY created_at DESC"),
+            "jobs": db_fetchall(conn, "SELECT * FROM jobs ORDER BY created_at ASC"),
+        }
+    finally:
+        conn.close()
+
+
 @app.post("/api/subscriptions")
 def create_subscription(body: SubscriptionIn):
     conn = get_db()
