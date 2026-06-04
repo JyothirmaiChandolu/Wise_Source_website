@@ -794,18 +794,6 @@ function GlobalPresence() {
       address: '20008 Champion Forest Dr, STE 403, Spring, TX 77379',
       image: '/images/services/Houston_skyline.jpg',
       landmark: 'Houston Skyline'
-    },
-    {
-      country: 'INDIA',
-      address: 'Road No 36 & 37 Beside Madhapur Metro Station, Jubilee Hills, Hyderabad, Telangana, 500033',
-      image: '/images/services/charminar.jpg',
-      landmark: 'Charminar'
-    },
-    {
-      country: 'CANADA',
-      address: '132 Daylily Lane, Kitchener, Ontario, N2R 0L7',
-      image: '/images/services/torant_tower.webp',
-      landmark: 'Toronto CN Tower'
     }
   ];
 
@@ -822,11 +810,11 @@ function GlobalPresence() {
             Global Presence
           </h2>
           <p className="text-lg text-muted-foreground">
-            Serving clients across three continents with local expertise
+            Headquartered in the United States, serving clients nationwide
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="flex justify-center">
           {locations.map((location, index) => (
             <motion.div
               key={index}
@@ -834,7 +822,7 @@ function GlobalPresence() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.2 }}
-              className="group relative overflow-hidden rounded-2xl bg-card border border-border hover:border-primary transition-all shadow-lg"
+              className="group relative overflow-hidden rounded-2xl bg-card border border-border hover:border-primary transition-all shadow-lg w-full max-w-sm"
               onMouseEnter={() => setHoveredCard(index)}
               onMouseLeave={() => setHoveredCard(null)}
               whileHover={{ y: -8 }}
@@ -2763,7 +2751,7 @@ function ContactPage({ navigate, navigateToService }: { navigate: (page: Page) =
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
-            className="space-y-8"
+            className="space-y-8 mt-16"
           >
             <div>
               <h2 className="text-2xl font-bold mb-6" style={{ fontFamily: 'var(--font-display)' }}>
@@ -2810,18 +2798,6 @@ function ContactPage({ navigate, navigateToService }: { navigate: (page: Page) =
                         <div className="text-xs font-bold text-primary uppercase tracking-wider mb-0.5">USA</div>
                         <div className="text-sm text-muted-foreground leading-snug">
                           20008 Champion Forest Dr, STE 403<br />Spring, TX 77379
-                        </div>
-                      </div>
-                      <div>
-                        <div className="text-xs font-bold text-accent uppercase tracking-wider mb-0.5">India</div>
-                        <div className="text-sm text-muted-foreground leading-snug">
-                          Road No 36 & 37, Beside Madhapur Metro Station<br />Jubilee Hills, Hyderabad, Telangana 500033
-                        </div>
-                      </div>
-                      <div>
-                        <div className="text-xs font-bold text-chart-2 uppercase tracking-wider mb-0.5">Canada</div>
-                        <div className="text-sm text-muted-foreground leading-snug">
-                          132 Daylily Lane<br />Kitchener, Ontario N2R 0L7
                         </div>
                       </div>
                     </div>
