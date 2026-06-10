@@ -135,6 +135,22 @@ def create_job(body: JobIn):
         conn.close()
 
 
+@app.delete("/api/jobs/{job_id}")
+def delete_job(job_id: int, key: str = ""):
+    if key != "wisesource-admin-2026":
+        raise HTTPException(status_code=403, detail="Forbidden")
+    conn = get_db()
+    try:
+        cur = conn.cursor()
+        cur.execute(f"DELETE FROM jobs WHERE id = {PH}", (job_id,))
+        conn.commit()
+        if cur.rowcount == 0:
+            raise HTTPException(status_code=404, detail="Job not found")
+        return {"success": True}
+    finally:
+        conn.close()
+
+
 @app.post("/api/applications")
 async def create_application(
     job_id: Optional[str] = Form(None),
@@ -216,6 +232,22 @@ def create_blog(body: BlogIn):
             (body.category, body.title, body.caption, body.excerpt, body.image, body.date, body.read_time, body.content_intro, body.content_points, body.content_conclusion_heading, body.content_conclusion_text, body.is_published),
         )
         return {"success": True, "id": row_id}
+    finally:
+        conn.close()
+
+
+@app.delete("/api/blogs/{blog_id}")
+def delete_blog(blog_id: int, key: str = ""):
+    if key != "wisesource-admin-2026":
+        raise HTTPException(status_code=403, detail="Forbidden")
+    conn = get_db()
+    try:
+        cur = conn.cursor()
+        cur.execute(f"DELETE FROM blogs WHERE id = {PH}", (blog_id,))
+        conn.commit()
+        if cur.rowcount == 0:
+            raise HTTPException(status_code=404, detail="Blog not found")
+        return {"success": True}
     finally:
         conn.close()
 

@@ -1848,6 +1848,8 @@ function ServiceDetailPage({ service, navigate, navigateToService }: { service: 
 function BlogsPage({ navigate, navigateToService, selectedPost, setSelectedPost }: { navigate: (page: Page) => void; navigateToService: (slug: string) => void; selectedPost: number | null; setSelectedPost: (v: number | null) => void }) {
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [blogListPage, setBlogListPage] = useState(0);
+  const POSTS_PER_PAGE = 7;
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_URL}/api/blogs`)
@@ -1964,71 +1966,112 @@ function BlogsPage({ navigate, navigateToService, selectedPost, setSelectedPost 
       <section className="py-20 px-6" style={{ background: 'radial-gradient(ellipse at top left, #bfdbfe 0%, transparent 55%), radial-gradient(ellipse at bottom right, #bfdbfe 0%, transparent 55%), var(--background)' }}>
         <div className="max-w-6xl mx-auto space-y-16">
 
-          {/* Featured — first post */}
-          {(() => { const post = posts[0]; return (
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="grid grid-cols-1 md:grid-cols-2 gap-0 rounded-2xl overflow-hidden border border-border shadow-lg hover:shadow-xl transition-all"
-            >
-              <div className="relative overflow-hidden h-64 md:h-auto">
-                <motion.img src={post.image} alt={post.title} className="w-full h-full object-cover" whileHover={{ scale: 1.05 }} transition={{ duration: 0.5 }} />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
-                <span className="absolute top-4 left-4 px-3 py-1 text-xs font-bold tracking-widest uppercase bg-primary text-white rounded-full">Latest</span>
-              </div>
-              <div className="p-10 flex flex-col justify-center bg-secondary text-secondary-foreground">
-                <span className="text-xs font-bold tracking-widest uppercase text-primary mb-3">{post.category}</span>
-                <h2 className="text-2xl md:text-3xl font-bold mb-4 leading-tight" style={{ fontFamily: 'var(--font-display)' }}>{post.title}</h2>
-                <p className="text-sm text-secondary-foreground/60 leading-relaxed mb-6">{post.excerpt}</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-secondary-foreground/40">{post.date} · {post.readTime}</span>
-                  {post.content && (
-                    <motion.button onClick={() => setSelectedPost(0)} className="inline-flex items-center gap-2 text-primary font-semibold text-sm" whileHover={{ x: 3 }}>
-                      Read More <ArrowRight size={16} />
-                    </motion.button>
-                  )}
-                </div>
-              </div>
-            </motion.div>
-          ); })()}
+          {(() => {
+            const pageStart = blogListPage * POSTS_PER_PAGE;
+            const pagePosts = posts.slice(pageStart, pageStart + POSTS_PER_PAGE);
+            const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE);
+            const featured = pagePosts[0];
+            const gridPosts = pagePosts.slice(1);
+            return (
+              <>
+                {/* Featured — first post of page */}
+                {featured && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 40 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6 }}
+                    className="grid grid-cols-1 md:grid-cols-2 gap-0 rounded-2xl overflow-hidden border border-border shadow-lg hover:shadow-xl transition-all"
+                  >
+                    <div className="relative overflow-hidden h-64 md:h-auto">
+                      <motion.img src={featured.image} alt={featured.title} className="w-full h-full object-cover" whileHover={{ scale: 1.05 }} transition={{ duration: 0.5 }} />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+                      <span className="absolute top-4 left-4 px-3 py-1 text-xs font-bold tracking-widest uppercase bg-primary text-white rounded-full">
+                        {blogListPage === 0 ? 'Latest' : `Page ${blogListPage + 1}`}
+                      </span>
+                    </div>
+                    <div className="p-10 flex flex-col justify-center bg-secondary text-secondary-foreground">
+                      <span className="text-xs font-bold tracking-widest uppercase text-primary mb-3">{featured.category}</span>
+                      <h2 className="text-2xl md:text-3xl font-bold mb-4 leading-tight" style={{ fontFamily: 'var(--font-display)' }}>{featured.title}</h2>
+                      <p className="text-sm text-secondary-foreground/60 leading-relaxed mb-6">{featured.excerpt}</p>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-secondary-foreground/40">{featured.date} · {featured.readTime}</span>
+                        {featured.content && (
+                          <motion.button onClick={() => setSelectedPost(pageStart)} className="inline-flex items-center gap-2 text-primary font-semibold text-sm" whileHover={{ x: 3 }}>
+                            Read More <ArrowRight size={16} />
+                          </motion.button>
+                        )}
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
 
-          {/* Remaining 6 — 3-column grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {posts.slice(1).map((post, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.08 }}
-                className="blog-card group relative flex flex-col bg-card rounded-xl border border-border hover:border-transparent hover:shadow-md transition-colors duration-300"
-              >
-                {/* 360° border-draw SVG — starts top-center, travels clockwise on hover */}
-                <svg className="blog-card-svg absolute inset-0 w-full h-full pointer-events-none z-10" viewBox="0 0 100 100" preserveAspectRatio="none" overflow="visible">
-                  <rect x="0" y="0" width="100" height="100" rx="3" ry="3" fill="none" stroke="rgb(29,78,216)" strokeWidth="0.8" />
-                </svg>
-                <div className="relative h-44 overflow-hidden rounded-t-xl">
-                  <img src={post.image} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                {/* Remaining 6 — 3-column grid */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {gridPosts.map((post, i) => (
+                    <motion.div
+                      key={pageStart + i + 1}
+                      initial={{ opacity: 0, y: 30 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: i * 0.08 }}
+                      className="blog-card group relative flex flex-col bg-card rounded-xl border border-border hover:border-transparent hover:shadow-md transition-colors duration-300"
+                    >
+                      <svg className="blog-card-svg absolute inset-0 w-full h-full pointer-events-none z-10" viewBox="0 0 100 100" preserveAspectRatio="none" overflow="visible">
+                        <rect x="0" y="0" width="100" height="100" rx="3" ry="3" fill="none" stroke="rgb(29,78,216)" strokeWidth="0.8" />
+                      </svg>
+                      <div className="relative h-44 overflow-hidden rounded-t-xl">
+                        <img src={post.image} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                      </div>
+                      <div className="flex flex-col flex-1 p-5">
+                        <span className="text-xs font-bold tracking-widest uppercase text-primary mb-2">{post.category}</span>
+                        <h3 className="text-base font-bold leading-snug mb-3 text-foreground line-clamp-2" style={{ fontFamily: 'var(--font-display)' }}>{post.title}</h3>
+                        <p className="text-xs text-muted-foreground leading-relaxed line-clamp-3 mb-4 flex-1">{post.excerpt}</p>
+                        <div className="flex items-center justify-between pt-3 border-t border-border">
+                          <span className="text-xs text-muted-foreground/60">{post.date} · {post.readTime}</span>
+                          {post.content && (
+                            <motion.button onClick={() => setSelectedPost(pageStart + i + 1)} className="inline-flex items-center gap-1 text-primary text-xs font-semibold" whileHover={{ x: 2 }}>
+                              Read <ArrowRight size={13} />
+                            </motion.button>
+                          )}
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
                 </div>
-                <div className="flex flex-col flex-1 p-5">
-                  <span className="text-xs font-bold tracking-widest uppercase text-primary mb-2">{post.category}</span>
-                  <h3 className="text-base font-bold leading-snug mb-3 text-foreground line-clamp-2" style={{ fontFamily: 'var(--font-display)' }}>{post.title}</h3>
-                  <p className="text-xs text-muted-foreground leading-relaxed line-clamp-3 mb-4 flex-1">{post.excerpt}</p>
-                  <div className="flex items-center justify-between pt-3 border-t border-border">
-                    <span className="text-xs text-muted-foreground/60">{post.date} · {post.readTime}</span>
-                    {post.content && (
-                      <motion.button onClick={() => setSelectedPost(i + 1)} className="inline-flex items-center gap-1 text-primary text-xs font-semibold" whileHover={{ x: 2 }}>
-                        Read <ArrowRight size={13} />
-                      </motion.button>
-                    )}
+
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <div className="flex items-center justify-center gap-2 pt-4">
+                    <button
+                      onClick={() => { setBlogListPage(p => p - 1); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                      disabled={blogListPage === 0}
+                      className="px-4 py-2 rounded-lg border border-border text-sm font-medium disabled:opacity-30 disabled:cursor-not-allowed hover:bg-muted transition-colors"
+                    >
+                      ← Prev
+                    </button>
+                    {Array.from({ length: totalPages }, (_, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => { setBlogListPage(idx); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                        className={`w-9 h-9 rounded-lg border text-sm font-medium transition-colors ${idx === blogListPage ? 'bg-primary text-white border-primary' : 'border-border hover:bg-muted'}`}
+                      >
+                        {idx + 1}
+                      </button>
+                    ))}
+                    <button
+                      onClick={() => { setBlogListPage(p => p + 1); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                      disabled={blogListPage === totalPages - 1}
+                      className="px-4 py-2 rounded-lg border border-border text-sm font-medium disabled:opacity-30 disabled:cursor-not-allowed hover:bg-muted transition-colors"
+                    >
+                      Next →
+                    </button>
                   </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+                )}
+              </>
+            );
+          })()}
 
         </div>
       </section>
