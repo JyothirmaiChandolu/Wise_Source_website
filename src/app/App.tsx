@@ -2006,8 +2006,8 @@ function BlogsPage({ navigate, navigateToService, selectedPost, setSelectedPost 
                 className="blog-card group relative flex flex-col bg-card rounded-xl border border-border hover:border-transparent hover:shadow-md transition-colors duration-300"
               >
                 {/* 360° border-draw SVG — starts top-center, travels clockwise on hover */}
-                <svg className="blog-card-svg absolute inset-0 w-full h-full pointer-events-none z-10 rounded-xl" viewBox="0 0 100 100" preserveAspectRatio="none">
-                  <path d="M50,0 L100,0 L100,100 L0,100 L0,0 L50,0" fill="none" stroke="rgb(29,78,216)" strokeWidth="1" />
+                <svg className="blog-card-svg absolute inset-0 w-full h-full pointer-events-none z-10" viewBox="0 0 100 100" preserveAspectRatio="none" overflow="visible">
+                  <rect x="0" y="0" width="100" height="100" rx="3" ry="3" fill="none" stroke="rgb(29,78,216)" strokeWidth="0.8" />
                 </svg>
                 <div className="relative h-44 overflow-hidden rounded-t-xl">
                   <img src={post.image} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
