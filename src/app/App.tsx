@@ -1846,138 +1846,42 @@ function ServiceDetailPage({ service, navigate, navigateToService }: { service: 
 }
 
 function BlogsPage({ navigate, navigateToService, selectedPost, setSelectedPost }: { navigate: (page: Page) => void; navigateToService: (slug: string) => void; selectedPost: number | null; setSelectedPost: (v: number | null) => void }) {
+  const [posts, setPosts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_API_URL}/api/blogs`)
+      .then(r => r.json())
+      .then(data => {
+        setPosts(data.map((p: any) => ({
+          ...p,
+          readTime: p.read_time,
+          content: p.content_intro ? {
+            intro: p.content_intro,
+            points: JSON.parse(p.content_points || '[]'),
+            conclusion: { heading: p.content_conclusion_heading, text: p.content_conclusion_text },
+          } : null,
+        })));
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [selectedPost]);
 
-  const posts = [
-    {
-      category: 'Data Privacy & Compliance',
-      title: 'Navigating the Privacy Matrix: Surviving the CCPA Compliance Waves',
-      caption: 'Beyond the Opt-Out Button: What True Data Privacy Looks Like Now.',
-      excerpt: 'Data compliance isn\'t just about sticking a long, unreadable legal text block in your footer anymore. The latest CCPA updates change the rules on how companies collect, track, and handle user information.',
-      image: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800&h=500&fit=crop',
-      date: 'June 2026',
-      readTime: '4 min read',
-      content: {
-        intro: 'Data compliance isn\'t just about sticking a long, unreadable legal text block in your footer anymore. The latest updates to the California Consumer Privacy Act (CCPA) change the rules on how companies collect, track, and handle user information. If you\'re running digital systems today, compliance needs to be built directly into your technical architecture.',
-        points: [
-          { title: 'Fixing the Interface Bias', text: 'You can no longer use deceptive "dark patterns" that trick users into consenting to tracking. The design to opt out must be just as prominent and take the exact same number of clicks as opting in.' },
-          { title: 'The Long Archive Audit', text: 'Consumers now have the right to request years of historical data. If your software can\'t instantly crawl your legacy cloud systems, offline databases, and cold storage to pull an individual\'s data footprint, you are exposed.' },
-          { title: 'Pulling Back the Curtain on AI', text: 'If you use software algorithms to automatically score users or make decisions without human review, CCPA now requires you to offer a clear explanation of that logic—and give users an absolute right to opt out of automated profiling.' },
-        ],
-        conclusion: { heading: 'The Bottom Line', text: 'Compliance isn\'t a legal problem; it\'s a systems infrastructure problem. Winning enterprises are those that build clear data visibility directly into their pipelines from day one.' },
-      },
-    },
-    {
-      category: 'Enterprise Analytics',
-      title: 'Cracking the Enterprise Dashboard: The Mechanics of CEO Performance Analysis',
-      caption: 'Cutting Through Corporate Noise with Hard Execution Data.',
-      excerpt: 'Evaluating executive performance has historically been an exercise in subjective board evaluations and delayed quarterly reviews. Automated CEO Performance Analysis changes that dynamic entirely.',
-      image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=500&fit=crop',
-      date: 'May 2026',
-      readTime: '5 min read',
-      content: {
-        intro: 'This project answers a deceptively simple question: for every publicly traded company in the S&P 500 and Russell 2000 indices, who was CEO — and when? The answer matters for governance research, activist investing, board-diversity analysis, executive-compensation studies, and event-driven trading strategies alike. Yet no single authoritative database provides a clean, verified CEO history going back to 2000 for all ~2,500 companies across both indices.\n\nThe CEO Transition Impact Analysis project solves this by building an automated pipeline that collects company lists, ticker symbols, and CIK mappings for companies in the S&P 500 and Russell 2000 from official sources, along with company metadata from Yahoo Finance using yfinance. It uses a custom AI Agent built on OpenAI GPT-4o with a ReAct loop to fetch SEC EDGAR 8-K filings and automatically extract CEO transition information — including CEO names, start dates, and end dates — while also collecting company and index stock market data. The result is a structured dataset — one row per CEO tenure per company — that spans 25 years and covers every leadership transition a public company is required to disclose.\n\nCommercial databases like Bloomberg, FactSet, and Refinitiv do carry executive history, but they are expensive, have inconsistent historical depth for small-cap companies, and are difficult to audit. For a researcher working across the full Russell 2000, gaps and errors are common below the large-cap tier.\n\nFree sources each cover only part of the picture:',
-        points: [
-          { title: 'SEC EDGAR', text: 'Has authoritative CEO-change filings, but only from August 2004 onward, and only if you know which specific filing type and item to look for.' },
-          { title: 'Wikipedia', text: 'Has narrative CEO history for many companies, but it is unstructured, inconsistently maintained, and requires interpretation.' },
-          { title: 'Web Search', text: 'Can fill individual gaps, but is not systematic at scale.' },
-        ],
-        conclusion: { heading: 'The Outcome', text: 'By feeding these operational variables into high-speed data analytics dashboards, company boards can stop arguing over vague impressions. Instead, clean data parsing delivers an objective, live view of structural efficiency, making it incredibly simple to optimize enterprise targets.' },
-      },
-    },
-    {
-      category: 'AI & Biotechnology',
-      title: 'Embark on a Journey into Biology\'s Tomorrow: Unveiling the Marvels of AlphaFold!',
-      caption: 'Code Meets Chemistry: How Deep Learning Solved a 50-Year Biological Riddle.',
-      excerpt: 'For decades, predicting how a protein chain folds into its 3D shape required years of grueling lab work. Google DeepMind\'s AlphaFold proved that deep neural networks could predict molecular structures with staggering accuracy in minutes.',
-      image: 'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=800&h=500&fit=crop',
-      date: 'April 2026',
-      readTime: '5 min read',
-      content: {
-        intro: 'For decades, predicting exactly how a protein chain folds into its three-dimensional shape required years of grueling, expensive laboratory work using X-ray crystallography. Google DeepMind\'s AlphaFold blew those timelines apart, proving that deep neural networks could predict molecular structures with staggering accuracy in just a matter of minutes.',
-        points: [
-          { title: 'Mapping More Than Just Proteins', text: 'The latest iterations move past simple amino-acid strings. We are now seeing architectures predict interactions across DNA, RNA, and complex chemical ligands, giving pharmaceutical labs a massive head start in drug design.' },
-          { title: 'Spotting Toxic Mutations', text: 'Specialized offshoot models can now analyze tiny genetic variations to predict with high confidence whether specific mutations are benign or likely to cause cellular damage.' },
-          { title: 'Radical Research Acceleration', text: 'By replacing slow laboratory trial-and-error with high-fidelity predictive modeling, software engineering has effectively compressed decades of biological research into a couple of keystrokes.' },
-        ],
-        conclusion: { heading: 'The Future is Computational', text: 'We are moving rapidly toward a world where the next life-saving medicine won\'t just be discovered in a petri dish—it will be compiled, simulated, and optimized directly inside a software repository.' },
-      },
-    },
-    {
-      category: 'Cloud Architecture',
-      title: 'The Future of Cloud-Native Architecture',
-      caption: 'Microservices, Service Meshes, and the Next Era of Distributed Systems.',
-      excerpt: 'How microservices, service meshes, and eBPF are reshaping how enterprises build and operate large-scale distributed systems in the cloud.',
-      image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&h=500&fit=crop',
-      date: 'March 2026',
-      readTime: '6 min read',
-      content: {
-        intro: 'The cloud-native revolution is no longer a future promise — it is the operating standard for every serious enterprise technology team. Microservices, service meshes, and emerging kernel-level tools like eBPF are fundamentally changing how large-scale distributed systems are built, monitored, and scaled. The teams that understand this shift are shipping faster, spending less, and operating with far greater resilience.',
-        points: [
-          { title: 'Microservices and Service Mesh', text: 'Breaking monolithic applications into independently deployable services is only half the battle. Service meshes like Istio and Linkerd handle the hard part — traffic routing, mutual TLS encryption, retries, and observability — without a single line of application code change.' },
-          { title: 'eBPF for Deep Observability', text: 'Extended Berkeley Packet Filter (eBPF) allows engineers to attach lightweight programs directly to the Linux kernel. This means you can collect granular network, security, and performance telemetry across your entire fleet without any instrumentation overhead on the application side.' },
-          { title: 'Platform Engineering as a Discipline', text: 'Leading organizations are now building internal developer platforms (IDPs) that abstract away infrastructure complexity. Instead of every team reinventing CI/CD pipelines and Kubernetes manifests, a central platform team delivers a paved road — accelerating product delivery across the board.' },
-        ],
-        conclusion: { heading: 'The Cloud-Native Mandate', text: 'Cloud-native is not a checkbox — it is a continuous architectural discipline. Enterprises that invest in service mesh, eBPF observability, and platform engineering today will have an insurmountable operational advantage within the next three years.' },
-      },
-    },
-    {
-      category: 'Data Engineering',
-      title: 'Building Data Pipelines at Scale: Lessons from the Field',
-      caption: 'What Nobody Tells You About Petabyte-Scale Data Until It\'s Too Late.',
-      excerpt: 'Real-world patterns and hard-won lessons from building petabyte-scale data pipelines for Fortune 500 companies — covering Kafka, Spark, and the lakehouse pattern.',
-      image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&h=500&fit=crop',
-      date: 'February 2026',
-      readTime: '7 min read',
-      content: {
-        intro: 'After building data infrastructure for some of the largest enterprises in North America, a clear pattern emerges: most data pipeline failures are not technology failures — they are architecture failures made early that compound silently over time. Here are the lessons that Fortune 500 data teams learned the hard way, so you don\'t have to.',
-        points: [
-          { title: 'Kafka Is Not a Database', text: 'Teams routinely treat Apache Kafka as a persistent data store. It is not. Kafka is a high-throughput event streaming backbone. Design your pipelines with a clear separation between your streaming layer (Kafka), your transformation layer (Spark or Flink), and your storage layer (Delta Lake or Iceberg). Mixing these responsibilities creates pipelines that are impossible to debug at 3am.' },
-          { title: 'The Lakehouse Pattern Wins at Scale', text: 'The traditional data warehouse versus data lake debate is over. The lakehouse pattern — combining the raw storage flexibility of a data lake with the ACID transaction guarantees of a warehouse — is the architecture that scales. Delta Lake, Apache Iceberg, and Apache Hudi are the three mature implementations worth evaluating.' },
-          { title: 'Schema Evolution Is a First-Class Problem', text: 'At petabyte scale, upstream data producers change their schemas constantly. Building schema registries, enforcing backward compatibility contracts, and automating schema drift detection into your pipeline health checks is not optional — it is the difference between a data platform and a data swamp.' },
-        ],
-        conclusion: { heading: 'The Foundational Truth', text: 'Great data pipelines are invisible — they just work. Getting there requires treating data infrastructure with the same engineering rigor you apply to your production application stack. Invest in the architecture early, and the scale will take care of itself.' },
-      },
-    },
-    {
-      category: 'AI & ML',
-      title: 'AI Integration in Enterprise Systems: A Practical Guide',
-      caption: 'Moving Beyond the AI Pilot Graveyard Into Real Production Value.',
-      excerpt: 'A step-by-step framework for evaluating, piloting, and scaling AI/ML capabilities in enterprise environments — without disrupting existing workflows.',
-      image: 'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=800&h=500&fit=crop',
-      date: 'January 2026',
-      readTime: '6 min read',
-      content: {
-        intro: 'Approximately 80% of enterprise AI pilots never make it to production. The technology is rarely the problem — the integration strategy is. Most organizations approach AI as a standalone initiative bolted onto existing systems rather than as a capability woven into the core architecture. Here is the framework that consistently gets AI from proof-of-concept to production value.',
-        points: [
-          { title: 'Start With a Narrow, High-Value Problem', text: 'Resist the temptation to boil the ocean. The AI integrations that succeed are ruthlessly scoped. Identify a single workflow with measurable business impact — document classification, demand forecasting, support ticket routing — and build deep rather than wide. A narrow model that works reliably in production is worth ten broad models stuck in pilot.' },
-          { title: 'Build the Data Infrastructure First', text: 'AI models are only as good as the data pipelines feeding them. Before a single model is trained, the data collection, labeling, versioning, and monitoring infrastructure must be production-grade. Teams that skip this step build impressive demos and broken production systems.' },
-          { title: 'MLOps Is Not Optional', text: 'Deploying a model is easy. Keeping it accurate three months later is hard. Model drift, data distribution shifts, and dependency rot will silently degrade performance unless you have automated retraining pipelines, data quality monitoring, and model performance dashboards built from day one.' },
-        ],
-        conclusion: { heading: 'The Real Competitive Advantage', text: 'The enterprises winning with AI are not the ones with the most sophisticated models — they are the ones with the most reliable AI infrastructure. Build the operational foundation, and the model improvements will compound on top of it indefinitely.' },
-      },
-    },
-    {
-      category: 'DevOps',
-      title: 'DevSecOps: Shifting Security Left Without Slowing Down',
-      caption: 'How to Ship Fast and Stay Secure — Without Choosing One Over the Other.',
-      excerpt: 'How modern engineering teams are embedding security into every step of the CI/CD pipeline — and why it actually makes you ship faster, not slower.',
-      image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=500&fit=crop',
-      date: 'December 2025',
-      readTime: '5 min read',
-      content: {
-        intro: 'For years, security and development velocity were treated as fundamentally opposing forces — you could move fast or you could be secure, but not both. DevSecOps dismantles that false choice entirely. When security is embedded as automated gates inside the CI/CD pipeline rather than bolted on as a manual review at the end, it stops being a bottleneck and starts being a deployment accelerator.',
-        points: [
-          { title: 'Automated Security Scanning in the Pipeline', text: 'Static application security testing (SAST), dependency vulnerability scanning, and container image scanning should run on every single commit — not just before a release. Tools like Snyk, Trivy, and Semgrep integrate directly into GitHub Actions and GitLab CI with zero developer friction. A vulnerability caught at commit time takes minutes to fix. The same vulnerability caught post-deployment takes weeks.' },
-          { title: 'Infrastructure as Code Security', text: 'Every cloud misconfiguration that has ever caused a major breach was, at its core, a code review failure. Scanning Terraform and CloudFormation templates with tools like Checkov or tfsec before they reach production is the single highest-leverage security control available to a modern DevOps team. It catches open S3 buckets, overprivileged IAM roles, and unencrypted databases before they exist.' },
-          { title: 'Secrets Management as a Hard Gate', text: 'Hardcoded credentials in source code remain one of the most common enterprise breach vectors. Integrating secret scanning (GitLeaks, GitHub Advanced Security) as a blocking CI check — not a warning — eliminates the entire class of credential exposure vulnerabilities at the source.' },
-        ],
-        conclusion: { heading: 'The Result', text: 'Teams that implement DevSecOps correctly do not just improve their security posture — they ship more confidently. When every commit is automatically verified against security baselines, the cognitive load of "is this safe to deploy?" disappears. That mental clarity translates directly into development velocity.' },
-      },
-    },
-  ];
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center pt-24">
+        <div className="flex flex-col items-center gap-4 text-muted-foreground">
+          <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+          <span className="text-sm">Loading blogs...</span>
+        </div>
+      </div>
+    );
+  }
 
   if (selectedPost !== null) {
     const post = posts[selectedPost];
@@ -2014,7 +1918,7 @@ function BlogsPage({ navigate, navigateToService, selectedPost, setSelectedPost 
                   <p className="text-foreground leading-relaxed mb-8 text-base">{post.content.intro}</p>
 
                   <div className="space-y-6 mb-8">
-                    {post.content.points.map((point, i) => (
+                    {post.content.points.map((point: { title: string; text: string }, i: number) => (
                       <div key={i} className="flex gap-4 p-5 rounded-xl bg-card border border-border">
                         <div className="w-2 h-2 mt-2.5 rounded-full bg-primary flex-shrink-0" />
                         <div>
@@ -2056,46 +1960,76 @@ function BlogsPage({ navigate, navigateToService, selectedPost, setSelectedPost 
         </motion.div>
       </section>
 
-      {/* Posts — alternating layout */}
+      {/* Posts */}
       <section className="py-20 px-6" style={{ background: 'radial-gradient(ellipse at top left, #bfdbfe 0%, transparent 55%), radial-gradient(ellipse at bottom right, #bfdbfe 0%, transparent 55%), var(--background)' }}>
         <div className="max-w-6xl mx-auto space-y-16">
-          {posts.map((post, i) => {
-            const isEven = i % 2 === 0;
-            return (
+
+          {/* Featured — first post */}
+          {(() => { const post = posts[0]; return (
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="grid grid-cols-1 md:grid-cols-2 gap-0 rounded-2xl overflow-hidden border border-border shadow-lg hover:shadow-xl transition-all"
+            >
+              <div className="relative overflow-hidden h-64 md:h-auto">
+                <motion.img src={post.image} alt={post.title} className="w-full h-full object-cover" whileHover={{ scale: 1.05 }} transition={{ duration: 0.5 }} />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+                <span className="absolute top-4 left-4 px-3 py-1 text-xs font-bold tracking-widest uppercase bg-primary text-white rounded-full">Latest</span>
+              </div>
+              <div className="p-10 flex flex-col justify-center bg-secondary text-secondary-foreground">
+                <span className="text-xs font-bold tracking-widest uppercase text-primary mb-3">{post.category}</span>
+                <h2 className="text-2xl md:text-3xl font-bold mb-4 leading-tight" style={{ fontFamily: 'var(--font-display)' }}>{post.title}</h2>
+                <p className="text-sm text-secondary-foreground/60 leading-relaxed mb-6">{post.excerpt}</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-secondary-foreground/40">{post.date} · {post.readTime}</span>
+                  {post.content && (
+                    <motion.button onClick={() => setSelectedPost(0)} className="inline-flex items-center gap-2 text-primary font-semibold text-sm" whileHover={{ x: 3 }}>
+                      Read More <ArrowRight size={16} />
+                    </motion.button>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          ); })()}
+
+          {/* Remaining 6 — 3-column grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {posts.slice(1).map((post, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, y: 40 }}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-                className={`grid grid-cols-1 md:grid-cols-2 gap-0 rounded-2xl overflow-hidden border border-border shadow-lg hover:shadow-xl transition-all ${isEven ? '' : 'md:[direction:rtl]'}`}
+                transition={{ duration: 0.5, delay: i * 0.08 }}
+                className="blog-card group relative flex flex-col bg-card rounded-xl border border-border hover:border-transparent hover:shadow-md transition-colors duration-300"
               >
-                {/* Image */}
-                <div className={`relative overflow-hidden h-64 md:h-auto ${isEven ? '' : 'md:[direction:ltr]'}`}>
-                  <motion.img src={post.image} alt={post.title} className="w-full h-full object-cover" whileHover={{ scale: 1.05 }} transition={{ duration: 0.5 }} />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+                {/* 360° border-draw SVG — starts top-center, travels clockwise on hover */}
+                <svg className="blog-card-svg absolute inset-0 w-full h-full pointer-events-none z-10 rounded-xl" viewBox="0 0 100 100" preserveAspectRatio="none">
+                  <path d="M50,0 L100,0 L100,100 L0,100 L0,0 L50,0" fill="none" stroke="rgb(29,78,216)" strokeWidth="1" />
+                </svg>
+                <div className="relative h-44 overflow-hidden rounded-t-xl">
+                  <img src={post.image} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                 </div>
-                {/* Text card */}
-                <div className={`p-10 flex flex-col justify-center ${isEven ? 'bg-secondary text-secondary-foreground' : 'bg-card text-foreground'} ${isEven ? '' : 'md:[direction:ltr]'}`}>
-                  <span className="inline-block text-xs font-bold tracking-widest uppercase mb-4 text-primary">{post.category}</span>
-                  <h2 className="text-2xl md:text-3xl font-bold mb-4 leading-tight" style={{ fontFamily: 'var(--font-display)' }}>{post.title}</h2>
-                  <p className={`leading-relaxed mb-6 text-sm ${isEven ? 'text-secondary-foreground/60' : 'text-muted-foreground'}`}>{post.excerpt}</p>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <span className={`text-xs ${isEven ? 'text-secondary-foreground/40' : 'text-muted-foreground/60'}`}>{post.date}</span>
-                      <span className={`text-xs ${isEven ? 'text-secondary-foreground/40' : 'text-muted-foreground/60'}`}>·</span>
-                      <span className={`text-xs ${isEven ? 'text-secondary-foreground/40' : 'text-muted-foreground/60'}`}>{post.readTime}</span>
-                    </div>
+                <div className="flex flex-col flex-1 p-5">
+                  <span className="text-xs font-bold tracking-widest uppercase text-primary mb-2">{post.category}</span>
+                  <h3 className="text-base font-bold leading-snug mb-3 text-foreground line-clamp-2" style={{ fontFamily: 'var(--font-display)' }}>{post.title}</h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed line-clamp-3 mb-4 flex-1">{post.excerpt}</p>
+                  <div className="flex items-center justify-between pt-3 border-t border-border">
+                    <span className="text-xs text-muted-foreground/60">{post.date} · {post.readTime}</span>
                     {post.content && (
-                      <motion.button onClick={() => setSelectedPost(i)} className="inline-flex items-center gap-2 text-primary font-semibold text-sm hover:gap-3 transition-all" whileHover={{ x: 3 }}>
-                        Read More <ArrowRight size={16} />
+                      <motion.button onClick={() => setSelectedPost(i + 1)} className="inline-flex items-center gap-1 text-primary text-xs font-semibold" whileHover={{ x: 2 }}>
+                        Read <ArrowRight size={13} />
                       </motion.button>
                     )}
                   </div>
                 </div>
               </motion.div>
-            );
-          })}
+            ))}
+          </div>
+
         </div>
       </section>
 
@@ -2988,6 +2922,24 @@ function ContactPage({ navigate, navigateToService }: { navigate: (page: Page) =
         </div>
       </div>
     </div>
+    {/* Google Maps */}
+    <section className="px-6 pb-20">
+      <div className="max-w-7xl mx-auto">
+        <h2 className="text-2xl font-bold mb-6" style={{ fontFamily: 'var(--font-display)' }}>Our Office</h2>
+        <div className="rounded-2xl overflow-hidden border border-border shadow-sm h-96">
+          <iframe
+            title="WiseSource Office Location"
+            src="https://maps.google.com/maps?q=20008+Champion+Forest+Dr+STE+403+Spring+TX+77379&output=embed"
+            width="100%"
+            height="100%"
+            style={{ border: 0 }}
+            allowFullScreen
+            loading="lazy"
+          />
+        </div>
+      </div>
+    </section>
+
     <GlobalPresence />
     <Footer navigate={navigate} navigateToService={navigateToService} />
     </>

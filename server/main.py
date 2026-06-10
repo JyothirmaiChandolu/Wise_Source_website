@@ -81,6 +81,21 @@ class SubscriptionIn(BaseModel):
     email: str
 
 
+class BlogIn(BaseModel):
+    category: str
+    title: str
+    caption: Optional[str] = None
+    excerpt: str
+    image: str
+    date: str
+    read_time: str
+    content_intro: Optional[str] = None
+    content_points: Optional[str] = None
+    content_conclusion_heading: Optional[str] = None
+    content_conclusion_text: Optional[str] = None
+    is_published: int = 1
+
+
 # ── Routes ───────────────────────────────────────────────
 
 @app.post("/api/contacts")
@@ -176,7 +191,31 @@ def admin_data(key: str = ""):
             "job_applications": db_fetchall(conn, "SELECT * FROM job_applications ORDER BY created_at DESC"),
             "newsletter_subscriptions": db_fetchall(conn, "SELECT * FROM newsletter_subscriptions ORDER BY created_at DESC"),
             "jobs": db_fetchall(conn, "SELECT * FROM jobs ORDER BY created_at ASC"),
+            "blogs": db_fetchall(conn, "SELECT * FROM blogs ORDER BY id ASC"),
         }
+    finally:
+        conn.close()
+
+
+@app.get("/api/blogs")
+def get_blogs():
+    conn = get_db()
+    try:
+        return db_fetchall(conn, "SELECT * FROM blogs WHERE is_published = 1 ORDER BY id ASC")
+    finally:
+        conn.close()
+
+
+@app.post("/api/blogs")
+def create_blog(body: BlogIn):
+    conn = get_db()
+    try:
+        cur = conn.cursor()
+        row_id = db_insert(cur, conn,
+            f"INSERT INTO blogs (category, title, caption, excerpt, image, date, read_time, content_intro, content_points, content_conclusion_heading, content_conclusion_text, is_published) VALUES ({PH},{PH},{PH},{PH},{PH},{PH},{PH},{PH},{PH},{PH},{PH},{PH})",
+            (body.category, body.title, body.caption, body.excerpt, body.image, body.date, body.read_time, body.content_intro, body.content_points, body.content_conclusion_heading, body.content_conclusion_text, body.is_published),
+        )
+        return {"success": True, "id": row_id}
     finally:
         conn.close()
 

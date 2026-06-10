@@ -204,3 +204,13 @@
     animation: gradient 3s ease infinite;
   }
 }
+
+.blog-card-svg path {
+  stroke-dasharray: 400;
+  stroke-dashoffset: 400;
+}
+
+.blog-card:hover .blog-card-svg path {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 0.7s linear;
+}
