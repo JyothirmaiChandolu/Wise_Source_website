@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { Menu, X, ArrowRight, CheckCircle, Briefcase, Cloud, Shield, Database, TrendingUp, Users, Heart, Mail, Phone, MapPin, Linkedin, Twitter, Facebook, Instagram, Award, Globe, Zap, Code, BarChart, Server, Layers, GitBranch, Cpu, Sun, Moon, ChevronDown, Sparkles, Plus, Minus, BookOpen } from 'lucide-react';
 import { motion, AnimatePresence, useInView } from 'motion/react';
+import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
 
 type Page = 'home' | 'about' | 'services' | 'blogs' | 'careers' | 'contact';
 
@@ -2331,9 +2333,11 @@ type Job = {
 
 function ApplyModal({ role, onClose }: { role: Job; onClose: () => void }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [form, setForm] = useState({ first_name: '', last_name: '', email: '', phone: '', consent: false });
+  const [form, setForm] = useState({ first_name: '', last_name: '', email: '', consent: false });
+  const [phone, setPhone] = useState<string | undefined>(undefined);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState('');
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) setResumeFile(e.target.files[0]);
@@ -2341,15 +2345,19 @@ function ApplyModal({ role, onClose }: { role: Job; onClose: () => void }) {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!phone || !isValidPhoneNumber(phone)) { setError('Please enter a valid phone number.'); return; }
+    if (!form.consent) { setError('Please provide consent to proceed.'); return; }
+    if (!resumeFile) { setError('Please upload your resume.'); return; }
+    setError('');
     const fd = new FormData();
     fd.append('job_id', String(role.id));
     fd.append('job_title', role.title);
     fd.append('first_name', form.first_name);
     fd.append('last_name', form.last_name);
     fd.append('email', form.email);
-    fd.append('phone', form.phone);
+    fd.append('phone', phone);
     fd.append('consent', String(form.consent));
-    if (resumeFile) fd.append('resume', resumeFile);
+    fd.append('resume', resumeFile);
 
     const res = await fetch(`${import.meta.env.VITE_API_URL}/api/applications`, { method: 'POST', body: fd });
     const data = await res.json();
@@ -2374,7 +2382,7 @@ function ApplyModal({ role, onClose }: { role: Job; onClose: () => void }) {
 
       {/* Modal panel */}
       <motion.div
-        className="relative bg-card border border-border rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto"
+        className="relative bg-card border border-border rounded-2xl shadow-2xl w-full max-w-lg"
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -2388,12 +2396,12 @@ function ApplyModal({ role, onClose }: { role: Job; onClose: () => void }) {
           <X size={18} />
         </button>
 
-        <div className="p-8">
-          <p className="text-xs font-bold tracking-widest uppercase text-muted-foreground mb-2">MY APPLICATION</p>
-          <h2 className="text-2xl font-bold text-primary mb-3" style={{ fontFamily: 'var(--font-display)' }}>
+        <div className="p-6">
+          <p className="text-xs font-bold tracking-widest uppercase text-muted-foreground mb-1">MY APPLICATION</p>
+          <h2 className="text-xl font-bold text-primary mb-2" style={{ fontFamily: 'var(--font-display)' }}>
             {role.title}
           </h2>
-          <span className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1 rounded-full bg-muted text-muted-foreground mb-6">
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1 rounded-full bg-muted text-muted-foreground mb-4">
             <MapPin size={12} /> {role.location}
           </span>
 
@@ -2405,7 +2413,7 @@ function ApplyModal({ role, onClose }: { role: Job; onClose: () => void }) {
               <button onClick={onClose} className="mt-2 px-6 py-2.5 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-all">Close</button>
             </motion.div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={handleSubmit} className="space-y-3">
               <p className="text-sm font-semibold text-foreground">Requirements to apply:</p>
 
               {/* Name row */}
@@ -2450,13 +2458,16 @@ function ApplyModal({ role, onClose }: { role: Job; onClose: () => void }) {
               {/* Phone */}
               <div>
                 <label className="block text-xs font-semibold mb-1.5 text-muted-foreground uppercase tracking-wide">Phone</label>
-                <input
-                  type="tel"
-                  value={form.phone}
-                  onChange={(e) => setForm(f => ({ ...f, phone: e.target.value }))}
-                  className="w-full px-3 py-2.5 bg-input-background border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-ring transition-all"
-                  placeholder="+1 (555) 000-0000"
+                <PhoneInput
+                  international
+                  defaultCountry="US"
+                  value={phone}
+                  onChange={setPhone}
+                  className={`phone-input-wrapper ${phone && !isValidPhoneNumber(phone) ? 'phone-input-invalid' : ''}`}
                 />
+                {phone && !isValidPhoneNumber(phone) && (
+                  <p className="text-xs text-destructive mt-1">Enter a valid phone number for the selected country.</p>
+                )}
               </div>
 
               {/* Consent */}
@@ -2476,7 +2487,7 @@ function ApplyModal({ role, onClose }: { role: Job; onClose: () => void }) {
               <div>
                 <label className="block text-xs font-semibold mb-2 text-muted-foreground uppercase tracking-wide">Upload Resume</label>
                 <div
-                  className="border-2 border-dashed border-border rounded-xl p-6 flex flex-col items-center gap-2 text-center hover:border-primary/50 transition-colors cursor-pointer"
+                  className="border-2 border-dashed border-border rounded-xl p-4 flex flex-col items-center gap-1 text-center hover:border-primary/50 transition-colors cursor-pointer"
                   onClick={() => fileInputRef.current?.click()}
                 >
                   <ArrowRight size={22} className="text-muted-foreground rotate-[-90deg]" />
@@ -2497,6 +2508,8 @@ function ApplyModal({ role, onClose }: { role: Job; onClose: () => void }) {
                   className="hidden"
                 />
               </div>
+
+              {error && <p className="text-xs text-destructive font-medium">{error}</p>}
 
               <motion.button
                 type="submit"

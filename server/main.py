@@ -1,8 +1,11 @@
+import os
 import uuid
 from contextlib import asynccontextmanager
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
+import boto3
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -12,6 +15,9 @@ from database import IS_POSTGRES, PH, get_db, init_db
 
 if IS_POSTGRES:
     import psycopg2.extras  # type: ignore
+
+S3_BUCKET = os.environ.get("S3_BUCKET", "wisesource-resumes")
+s3 = boto3.client("s3")
 
 UPLOADS_DIR = Path(__file__).parent / "uploads"
 UPLOADS_DIR.mkdir(exist_ok=True)
@@ -174,10 +180,13 @@ async def create_application(
         if len(content) > 10 * 1024 * 1024:
             raise HTTPException(status_code=400, detail="File size exceeds 10 MB")
 
-        resume_filename = f"{uuid.uuid4().hex}{ext}"
-        resume_path = str(UPLOADS_DIR / resume_filename)
-        with open(resume_path, "wb") as f:
-            f.write(content)
+        now = datetime.now(timezone.utc)
+        timestamp = now.strftime("%Y%m%d%H%M%S")
+        folder_job_id = job_id if job_id else "general"
+        resume_filename = f"{first_name}_{last_name}_{timestamp}{ext}"
+        s3_key = f"WiseSource_Application/{now.year}/{now.month:02d}/{now.day:02d}/{folder_job_id}/{resume_filename}"
+        s3.put_object(Bucket=S3_BUCKET, Key=s3_key, Body=content)
+        resume_path = f"s3://{S3_BUCKET}/{s3_key}"
 
     conn = get_db()
     try:

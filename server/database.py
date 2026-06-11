@@ -95,6 +95,17 @@ def init_db():
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)
+        cur.execute("""
+            DO $$ BEGIN
+              IF NOT EXISTS (
+                SELECT 1 FROM information_schema.table_constraints
+                WHERE constraint_name = 'fk_job' AND table_name = 'job_applications'
+              ) THEN
+                ALTER TABLE job_applications
+                  ADD CONSTRAINT fk_job FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE SET NULL;
+              END IF;
+            END $$;
+        """)
         cur.execute("SELECT COUNT(*) FROM jobs")
         job_count = cur.fetchone()[0]
         cur.execute("SELECT COUNT(*) FROM blogs")

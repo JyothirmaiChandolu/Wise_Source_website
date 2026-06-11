@@ -3,3 +3,4 @@ uvicorn
 python-multipart
 aiofiles
 psycopg2-binary
+boto3
