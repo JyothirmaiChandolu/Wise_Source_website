@@ -319,7 +319,7 @@ function VisionMission() {
   const items = [
     {
       icon: <Server size={32} />,
-      title: '500+ IT Projects Delivered',
+      title: 'Enterprise IT Solutions Delivered',
       description: 'Architected and deployed enterprise-grade software solutions across finance, healthcare, and logistics sectors globally.',
     },
     {
@@ -663,7 +663,7 @@ function WhyChooseUs() {
   const isInView = useInView(ref, { once: true });
 
   const features = [
-    { icon: <Award className="w-8 h-8" />, title: 'Industry Expertise', desc: '15+ years delivering solutions' },
+    { icon: <Award className="w-8 h-8" />, title: 'Industry Expertise', desc: 'Deep domain knowledge across sectors' },
     { icon: <Users className="w-8 h-8" />, title: 'Top Talent', desc: 'Handpicked experts across every technology' },
     { icon: <Zap className="w-8 h-8" />, title: 'Rapid Delivery', desc: 'Agile methodologies' },
     { icon: <Shield className="w-8 h-8" />, title: 'Security First', desc: 'Enterprise-grade protection' }
@@ -1031,7 +1031,7 @@ const HERO_STATES = [
   {
     tag: 'Our Impact',
     headline: 'Global Reach.\nLocal Expertise.\nReal Results.',
-    sub: 'With offices in three continents and 500+ projects delivered, we bring both global perspective and deep local knowledge to every challenge.',
+    sub: 'We bring both global perspective and deep local knowledge to every engagement, partnering with clients across industries to drive meaningful impact.',
     accent: 'from-chart-5/20 via-accent/10 to-background',
     highlight: 'text-chart-5'
   }
@@ -1212,7 +1212,7 @@ function TimelineStep({ step, index, onActive }: { step: { title: string; descri
               </p>
             </div>
             {/* Right: bullet points + metric */}
-            <div>
+            <div className="text-left">
               <ul className="space-y-2 mb-4">
                 {step.details.map((d, i) => (
                   <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
@@ -1254,7 +1254,7 @@ const SEGMENTS = [
     bgClass: 'bg-[#c026d3]',
     // right quarter: 0° → 90°
     path: 'M 250 250 L 470 250 A 220 220 0 0 1 250 470 Z',
-    labelPos: { x: 345, y: 345 },
+    labelPos: { x: 345, y: 362 },
     badgePos: 'top-1/2 right-[4%] -translate-y-1/2'
   },
   {
@@ -1265,7 +1265,7 @@ const SEGMENTS = [
     bgClass: 'bg-[#1d4ed8]',
     // bottom quarter: 90° → 180°
     path: 'M 250 250 L 250 470 A 220 220 0 0 1 30 250 Z',
-    labelPos: { x: 155, y: 345 },
+    labelPos: { x: 155, y: 362 },
     badgePos: 'bottom-[8%] left-1/2 -translate-x-1/2'
   },
   {
@@ -1434,10 +1434,10 @@ function TeamExcellence() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {[
-            { num: '150+', label: 'Expert Engineers' },
-            { num: '20+', label: 'Certified Architects' },
-            { num: '98%', label: 'Client Retention' },
-            { num: '15+', label: 'Years Experience' }
+            { num: 'Senior', label: 'Engineering Talent' },
+            { num: 'Cloud', label: 'Native Architects' },
+            { num: 'Client', label: 'Focused Delivery' },
+            { num: 'Deep', label: 'Domain Expertise' }
           ].map((stat, i) => (
             <motion.div
               key={i}
@@ -2736,10 +2736,14 @@ function LifeAtWiseSource({ images }: { images: string[] }) {
 
 function BenefitsSection() {
   const benefits = [
-    { icon: <Heart className="w-6 h-6" />, title: 'Health & Wellness', desc: 'Comprehensive medical, dental, vision' },
-    { icon: <TrendingUp className="w-6 h-6" />, title: 'Career Growth', desc: 'Learning budgets & certifications' },
-    { icon: <Globe className="w-6 h-6" />, title: 'Remote-First', desc: 'Work from anywhere' },
-    { icon: <Award className="w-6 h-6" />, title: 'Equity', desc: 'Stock options for all employees' }
+    { icon: <Heart className="w-6 h-6" />, title: 'Health & Wellness', desc: 'Comprehensive medical, dental, and vision coverage for you and your family' },
+    { icon: <TrendingUp className="w-6 h-6" />, title: 'Career Growth', desc: 'Annual learning budgets, certifications, and conference sponsorships' },
+    { icon: <Globe className="w-6 h-6" />, title: 'Remote-First', desc: 'Flexible work-from-anywhere culture with async-friendly collaboration' },
+    { icon: <Award className="w-6 h-6" />, title: 'Equity', desc: 'Stock options for all full-time employees from day one' },
+    { icon: <Zap className="w-6 h-6" />, title: 'Home Office Setup', desc: 'One-time stipend to build your ideal home office environment' },
+    { icon: <Shield className="w-6 h-6" />, title: 'Paid Time Off', desc: 'Generous PTO policy plus paid holidays and mental health days' },
+    { icon: <Users className="w-6 h-6" />, title: 'Team Retreats', desc: 'Annual company retreats to connect, collaborate, and recharge' },
+    { icon: <Sparkles className="w-6 h-6" />, title: 'Performance Bonus', desc: 'Quarterly performance bonuses tied to individual and team outcomes' },
   ];
 
   return (
