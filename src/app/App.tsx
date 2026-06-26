@@ -795,7 +795,7 @@ function GlobalPresence() {
   const locations = [
     {
       country: 'USA',
-      address: '20008 Champion Forest Dr, STE 403, Spring, TX 77379',
+      address: '1712 Pioneer Ave, STE 7000, Cheyenne, WY 82001',
       image: '/images/services/Houston_skyline.jpg',
       landmark: 'Houston Skyline'
     }
@@ -974,9 +974,9 @@ function Footer({ navigate, navigateToService }: { navigate: (page: Page) => voi
         <div>
           <h4 className="font-bold mb-4" style={{ fontFamily: 'var(--font-display)' }}>Contact</h4>
           <div className="space-y-3">
-            <a href="mailto:contact@wisesource.tech" className="flex items-start gap-2 text-secondary-foreground/70 hover:text-secondary-foreground transition-colors">
+            <a href="mailto:contact@wisesource.com" className="flex items-start gap-2 text-secondary-foreground/70 hover:text-secondary-foreground transition-colors">
               <Mail className="w-5 h-5 mt-0.5 flex-shrink-0" />
-              <span>contact@wisesource.tech</span>
+              <span>contact@wisesource.com</span>
             </a>
             <a href="tel:+18329377277" className="flex items-start gap-2 text-secondary-foreground/70 hover:text-secondary-foreground transition-colors">
               <Phone className="w-5 h-5 mt-0.5 flex-shrink-0" />
@@ -2930,7 +2930,7 @@ function ContactPage({ navigate, navigateToService }: { navigate: (page: Page) =
                   </div>
                   <div>
                     <div className="font-semibold mb-1">Email</div>
-                    <div className="text-muted-foreground">contact@wisesource.tech</div>
+                    <div className="text-muted-foreground">contact@wisesource.com</div>
                   </div>
                 </motion.div>
 
@@ -2960,7 +2960,7 @@ function ContactPage({ navigate, navigateToService }: { navigate: (page: Page) =
                       <div>
                         <div className="text-xs font-bold text-primary uppercase tracking-wider mb-0.5">USA</div>
                         <div className="text-sm text-muted-foreground leading-snug">
-                          20008 Champion Forest Dr, STE 403<br />Spring, TX 77379
+                          1712 Pioneer Ave, STE 7000<br />Cheyenne, WY 82001
                         </div>
                       </div>
                     </div>
@@ -2989,7 +2989,7 @@ function ContactPage({ navigate, navigateToService }: { navigate: (page: Page) =
         <div className="rounded-2xl overflow-hidden border border-border shadow-sm h-96">
           <iframe
             title="WiseSource Office Location"
-            src="https://maps.google.com/maps?q=20008+Champion+Forest+Dr+STE+403+Spring+TX+77379&output=embed"
+            src="https://maps.google.com/maps?q=1712+Pioneer+Ave+STE+7000+Cheyenne+WY+82001&output=embed"
             width="100%"
             height="100%"
             style={{ border: 0 }}
