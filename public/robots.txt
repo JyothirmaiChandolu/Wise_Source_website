@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://wise-source.com/sitemap.xml

@@ -26,6 +26,47 @@ export default function App() {
     document.documentElement.classList.toggle('dark', darkMode);
   }, [darkMode]);
 
+  useEffect(() => {
+    const meta: Record<Page, { title: string; description: string }> = {
+      home: {
+        title: 'WiseSource | IT Solutions & Technology Consulting',
+        description: 'WiseSource delivers expert IT solutions including software engineering, cloud architecture, data engineering, DevOps, and AI & ML services.',
+      },
+      about: {
+        title: 'About Us | WiseSource',
+        description: 'Learn about WiseSource — our mission, vision, and the team of senior engineers and cloud architects driving client-focused technology delivery.',
+      },
+      services: {
+        title: 'Services | WiseSource',
+        description: 'Explore WiseSource services: software engineering, cloud architecture, data engineering, data analytics, DevOps & automation, and AI & machine learning.',
+      },
+      blogs: {
+        title: 'Blog | WiseSource',
+        description: 'Read the latest insights from WiseSource on AI, cloud computing, data engineering, DevOps, and modern software development.',
+      },
+      careers: {
+        title: 'Careers | WiseSource',
+        description: 'Join the WiseSource team. Explore open roles in software engineering, cloud, data, and AI. We offer remote-first culture, equity, and growth opportunities.',
+      },
+      contact: {
+        title: 'Contact Us | WiseSource',
+        description: 'Get in touch with WiseSource. Reach our team at contact@wisesource.com or visit us at 1712 Pioneer Ave, STE 7000, Cheyenne, WY 82001.',
+      },
+    };
+    const { title, description } = meta[currentPage];
+    document.title = title;
+    const descTag = document.querySelector('meta[name="description"]');
+    if (descTag) descTag.setAttribute('content', description);
+    const ogTitle = document.querySelector('meta[property="og:title"]');
+    if (ogTitle) ogTitle.setAttribute('content', title);
+    const ogDesc = document.querySelector('meta[property="og:description"]');
+    if (ogDesc) ogDesc.setAttribute('content', description);
+    const twTitle = document.querySelector('meta[name="twitter:title"]');
+    if (twTitle) twTitle.setAttribute('content', title);
+    const twDesc = document.querySelector('meta[name="twitter:description"]');
+    if (twDesc) twDesc.setAttribute('content', description);
+  }, [currentPage]);
+
   const navigate = (page: Page) => {
     if (page === 'blogs') setSelectedBlogPost(null);
     setCurrentPage(page);
