@@ -1233,7 +1233,7 @@ function TimelineStep({ step, index, onActive }: { step: { title: string; descri
             initial={{ scale: 0 }}
             whileHover={{ scale: 1 }}
           />
-          <div className="relative z-10 grid grid-cols-2 gap-6 items-center">
+          <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 items-center">
             {/* Left: number + title + description */}
             <div>
               <div className="flex items-center gap-3 mb-3">
